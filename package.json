@@ -1,0 +1,41 @@
+{
+  "name": "nested-proxies",
+  "version": "0.0.0",
+  "description": "A Deep Proxy!",
+  "main": "lib/DeepProxy.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "tea-time -R dot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cronvel/nested-proxies.git"
+  },
+  "keywords": [
+    "deep",
+    "proxy"
+  ],
+  "author": "Cédric Ronvel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cronvel/nested-proxies/issues"
+  },
+  "config": {
+    "tea-time": {
+      "coverDir": [
+        "lib"
+      ]
+    }
+  },
+  "copyright": {
+    "title": "Nested Proxies",
+    "years": [
+      2018
+    ],
+    "owner": "Cédric Ronvel"
+  }
+}
