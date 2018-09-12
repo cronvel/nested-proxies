@@ -148,11 +148,11 @@ describe( "DeepProxy" , () => {
 		var object = { a: 1 , deep: { c: 3 , deeper: { hello: "world!" } } , array: [ 1 , 2 , 3 ] } ;
 		var proxy = new DeepProxy( object , {
 			set: ( target , property , value , receiver , path ) => {
-				if ( ! Array.isArray( target ) || property !== 'length' ) {
-					target[ property ] = path + ':' + value ;
+				if ( Array.isArray( target ) && property === 'length' ) {
+					target.length = value ;
 				}
 				else {
-					target[ property ] = value ;
+					target[ property ] = path + ':' + value ;
 				}
 				
 				return true ;
@@ -174,6 +174,46 @@ describe( "DeepProxy" , () => {
 		
 		proxy.array.push( 40 ) ;
 		expect( object.array[ 3 ] ).to.be( "array[3]:40" ) ;
+		expect( object.array.length ).to.be( 4 ) ;
+	} ) ;
+
+	it( "'pathArray' mode" , () => {
+		var object = { a: 1 , deep: { c: 3 , deeper: { hello: "world!" } } , array: [ 1 , 2 , 3 ] } ;
+		var proxy = new DeepProxy(
+			object ,
+			{
+				set: ( target , property , value , receiver , path ) => {
+					if ( Array.isArray( target ) && property === 'length' ) {
+						target.length = value ;
+					}
+					else {
+						target[ property ] = path ;
+						path.push( value ) ;
+					}
+					
+					return true ;
+				}
+			} ,
+			{
+				pathArray: true
+			}
+		) ;
+		
+		proxy.a = 10 ;
+		proxy.deep.c = 13 ;
+		proxy.deep.deeper.hello = "w-o-r-l-d" ;
+		proxy.array[ 1 ] = 20 ;
+		
+		expect( object.a ).to.equal( [ 'a' , 10 ] ) ;
+		expect( object.deep.c ).to.equal( [ 'deep' , 'c' , 13 ] ) ;
+		expect( object.deep.deeper.hello ).to.equal( [ 'deep' , 'deeper' , 'hello' , 'w-o-r-l-d' ] ) ;
+		expect( object.array[ 0 ] ).to.be( 1 ) ;
+		expect( object.array[ 1 ] ).to.equal( [ 'array' , 1 , 20 ] ) ;
+		expect( object.array[ 2 ] ).to.be( 3 ) ;
+		expect( object.array.length ).to.be( 3 ) ;
+		
+		proxy.array.push( 40 ) ;
+		expect( object.array[ 3 ] ).to.equal( [ 'array' , 3 , 40 ] ) ;
 		expect( object.array.length ).to.be( 4 ) ;
 	} ) ;
 
