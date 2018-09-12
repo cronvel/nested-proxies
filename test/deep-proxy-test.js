@@ -28,7 +28,7 @@
 
 
 
-var DeepProxy = require( '../lib/DeepProxy.js' ) ;
+var DeepProxy = require( '..' ) ;
 
 
 
