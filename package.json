@@ -1,6 +1,6 @@
 {
   "name": "nested-proxies",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "A Deep Proxy!",
   "main": "lib/DeepProxy.js",
   "directories": {
