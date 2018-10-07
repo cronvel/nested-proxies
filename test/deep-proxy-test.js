@@ -122,6 +122,23 @@ describe( "DeepProxy" , () => {
 		//console.log( object ) ;
 	} ) ;
 	
+	it( "simple get, set, then get again (and deep) without handler" , () => {
+		var object = { array: [ 1 , 2 , 3 ] , deep: { array: [ 4 , 5 , 6 ] } } ;
+		var proxy = new DeepProxy( object ) ;
+		
+		expect( proxy.array ).to.equal( [ 1 , 2 , 3 ] ) ;
+		proxy.array[ 0 ] = 'one' ;
+		expect( proxy.array ).to.equal( [ 'one' , 2 , 3 ] ) ;
+		proxy.array = [ 'one' , 'two' ] ;
+		expect( proxy.array ).to.equal( [ 'one' , 'two' ] ) ;
+		
+		expect( proxy.deep.array ).to.equal( [ 4 , 5 , 6 ] ) ;
+		proxy.deep.array[ 0 ] = 'three' ;
+		expect( proxy.deep.array ).to.equal( [ 'three' , 5 , 6 ] ) ;
+		proxy.deep.array = [ 'three' , 'four' ] ;
+		expect( proxy.deep.array ).to.equal( [ 'three' , 'four' ] ) ;
+	} ) ;
+	
 	it( "array .push() and deep .push() set without handler" , () => {
 		var array = [ 1 , 2 , 3 ] ;
 		var proxy = new DeepProxy( array ) ;
