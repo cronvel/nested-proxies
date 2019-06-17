@@ -55,7 +55,7 @@ describe( "DeepProxy" , () => {
 		expect( proxy.array ).to.be( proxy.array ) ;
 	} ) ;
 	
-	it( "get and deep get with handler the 'getLeaf' handler" , () => {
+	it( "get and deep get with handler 'getLeaf' handler" , () => {
 		var object = { a: 1 , deep: { c: 3 , deeper: { hello: "world!" } } , array: [ 1 , 2 , 3 ] } ;
 		
 		var proxy = new DeepProxy( object , {
@@ -77,7 +77,7 @@ describe( "DeepProxy" , () => {
 		expect( proxy.array.length ).to.be( "array.length:3" ) ;
 	} ) ;
 	
-	it( "get and deep get with handler the 'get' handler, exhibiting the handler context 'this.nested()'" , () => {
+	it( "get and deep get with the 'get' handler, exhibiting the handler context 'this.nested()'" , () => {
 		var object = { a: 1 , deep: { c: 3 , deeper: { hello: "world!" } } , array: [ 1 , 2 , 3 ] } ;
 		
 		var proxy = new DeepProxy( object , {
