@@ -1,7 +1,7 @@
 /*
 	Nested Proxies
 
-	Copyright (c) 2018 Cédric Ronvel
+	Copyright (c) 2018 - 2020 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -139,7 +139,7 @@ describe( "DeepProxy" , () => {
 		expect( proxy.deep.array ).to.equal( [ 'three' , 'four' ] ) ;
 	} ) ;
 	
-	it( "array .push() and deep .push() set without handler" , () => {
+	it( "array .push() and deep .push() without handler" , () => {
 		var array = [ 1 , 2 , 3 ] ;
 		var proxy = new DeepProxy( array ) ;
 		
@@ -159,6 +159,22 @@ describe( "DeepProxy" , () => {
 		expect( proxy.array[ 2 ] ).to.be( 3 ) ;
 		expect( proxy.array[ 3 ] ).to.be( 40 ) ;
 		expect( proxy.array.length ).to.be( 4 ) ;
+	} ) ;
+	
+	it( "array .splice() and deep .splice() without handler" , () => {
+		var array = [ 4 , 5 , 6 , 7 , 8 ] ;
+		var proxy = new DeepProxy( array ) ;
+		
+		proxy.splice( 2 , 2 ) ;
+		expect( proxy ).to.be.like( [ 4 , 5 , 8 ] ) ;
+		expect( proxy.length ).to.be( 3 ) ;
+		
+		var object = { array: [ 4 , 5 , 6 , 7 , 8 ] } ;
+		proxy = new DeepProxy( object ) ;
+		
+		proxy.array.splice( 2 , 2 ) ;
+		expect( proxy.array ).to.be.like( [ 4 , 5 , 8 ] ) ;
+		expect( proxy.array.length ).to.be( 3 ) ;
 	} ) ;
 	
 	it( "simple set and deep set with handler" , () => {
