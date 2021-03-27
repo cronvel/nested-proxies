@@ -1,7 +1,7 @@
 /*
 	Nested Proxies
 
-	Copyright (c) 2018 - 2020 Cédric Ronvel
+	Copyright (c) 2018 - 2021 Cédric Ronvel
 
 	The MIT License (MIT)
 
@@ -28,12 +28,12 @@
 
 
 
-var DeepProxy = require( '..' ) ;
+const DeepProxy = require( '..' ) ;
 
 
 
-describe( "DeepProxy" , () => {
-	
+describe( "Basic usage" , () => {
+
 	it( "get and deep get without handler" , () => {
 		var object = { a: 1 , deep: { c: 3 , deeper: { hello: "world!" } } , array: [ 1 , 2 , 3 ] } ;
 		var proxy = new DeepProxy( object ) ;
@@ -53,54 +53,6 @@ describe( "DeepProxy" , () => {
 		// check the deep proxy cache/weakmap
 		expect( proxy.deep ).to.be( proxy.deep ) ;
 		expect( proxy.array ).to.be( proxy.array ) ;
-	} ) ;
-	
-	it( "get and deep get with handler 'getLeaf' handler" , () => {
-		var object = { a: 1 , deep: { c: 3 , deeper: { hello: "world!" } } , array: [ 1 , 2 , 3 ] } ;
-		
-		var proxy = new DeepProxy( object , {
-			getLeaf: ( target , property , receiver , path ) => {
-				return path + ':' + target[ property ] ;
-			}
-		} ) ;
-		
-		expect( proxy ).not.to.be( object ) ;
-		expect( proxy.a ).to.be( "a:1" ) ;
-		expect( proxy.deep ).not.to.be( object.deep ) ;
-		expect( proxy.deep.c ).to.be( "deep.c:3" ) ;
-		expect( proxy.deep.deeper ).not.to.be( object.deep.deeper ) ;
-		expect( proxy.deep.deeper.hello ).to.be( "deep.deeper.hello:world!" ) ;
-		expect( proxy.array ).not.to.be( object.array ) ;
-		expect( proxy.array[ 0 ] ).to.be( "array[0]:1" ) ;
-		expect( proxy.array[ 1 ] ).to.be( "array[1]:2" ) ;
-		expect( proxy.array[ 2 ] ).to.be( "array[2]:3" ) ;
-		expect( proxy.array.length ).to.be( "array.length:3" ) ;
-	} ) ;
-	
-	it( "get and deep get with the 'get' handler, exhibiting the handler context 'this.nested()'" , () => {
-		var object = { a: 1 , deep: { c: 3 , deeper: { hello: "world!" } } , array: [ 1 , 2 , 3 ] } ;
-		
-		var proxy = new DeepProxy( object , {
-			get: function( target , property , receiver , path ) {
-				if ( target[ property ] && typeof target[ property ] === 'object' ) {
-					return this.nested( property ) ;
-				}
-				
-				return path + ':' + target[ property ] ;
-			}
-		} ) ;
-		
-		expect( proxy ).not.to.be( object ) ;
-		expect( proxy.a ).to.be( "a:1" ) ;
-		expect( proxy.deep ).not.to.be( object.deep ) ;
-		expect( proxy.deep.c ).to.be( "deep.c:3" ) ;
-		expect( proxy.deep.deeper ).not.to.be( object.deep.deeper ) ;
-		expect( proxy.deep.deeper.hello ).to.be( "deep.deeper.hello:world!" ) ;
-		expect( proxy.array ).not.to.be( object.array ) ;
-		expect( proxy.array[ 0 ] ).to.be( "array[0]:1" ) ;
-		expect( proxy.array[ 1 ] ).to.be( "array[1]:2" ) ;
-		expect( proxy.array[ 2 ] ).to.be( "array[2]:3" ) ;
-		expect( proxy.array.length ).to.be( "array.length:3" ) ;
 	} ) ;
 	
 	it( "simple set and deep set without handler" , () => {
@@ -331,6 +283,99 @@ describe( "DeepProxy" , () => {
 		expect( proxy.deep.inc() ).to.be( 4 ) ;
 		expect( object ).to.partially.equal( { v: 2 , called: 1 , deep: { v: 4 , called: 1 } } ) ;
 	} ) ;
+} ) ;
+
+
+
+describe( "Behavior of the 'getLeaf' handler" , () => {
+
+	it( "get and deep get with the 'getLeaf' handler" , () => {
+		var object = { a: 1 , deep: { c: 3 , deeper: { hello: "world!" } } , array: [ 1 , 2 , 3 ] } ;
+		
+		var proxy = new DeepProxy( object , {
+			getLeaf: ( target , property , receiver , path ) => {
+				return path + ':' + target[ property ] ;
+			}
+		} ) ;
+		
+		expect( proxy ).not.to.be( object ) ;
+		expect( proxy.a ).to.be( "a:1" ) ;
+		expect( proxy.deep ).not.to.be( object.deep ) ;
+		expect( proxy.deep.c ).to.be( "deep.c:3" ) ;
+		expect( proxy.deep.deeper ).not.to.be( object.deep.deeper ) ;
+		expect( proxy.deep.deeper.hello ).to.be( "deep.deeper.hello:world!" ) ;
+		expect( proxy.array ).not.to.be( object.array ) ;
+		expect( proxy.array[ 0 ] ).to.be( "array[0]:1" ) ;
+		expect( proxy.array[ 1 ] ).to.be( "array[1]:2" ) ;
+		expect( proxy.array[ 2 ] ).to.be( "array[2]:3" ) ;
+		expect( proxy.array.length ).to.be( "array.length:3" ) ;
+	} ) ;
+} ) ;
+
+
+
+describe( "Custom nested behavior" , () => {
+
+	it( "get and deep get with the 'get' handler, exhibiting the handler context's 'this.nested()'" , () => {
+		var object = { a: 1 , deep: { c: 3 , deeper: { hello: "world!" } } , array: [ 1 , 2 , 3 ] } ;
+		
+		var proxy = new DeepProxy( object , {
+			get: function( target , property , receiver , path ) {
+				if ( target[ property ] && typeof target[ property ] === 'object' ) {
+					return this.nested( property ) ;
+				}
+				
+				return path + ':' + target[ property ] ;
+			}
+		} ) ;
+		
+		expect( proxy ).not.to.be( object ) ;
+		expect( proxy.a ).to.be( "a:1" ) ;
+		expect( proxy.deep ).not.to.be( object.deep ) ;
+		expect( proxy.deep.c ).to.be( "deep.c:3" ) ;
+		expect( proxy.deep.deeper ).not.to.be( object.deep.deeper ) ;
+		expect( proxy.deep.deeper.hello ).to.be( "deep.deeper.hello:world!" ) ;
+		expect( proxy.array ).not.to.be( object.array ) ;
+		expect( proxy.array[ 0 ] ).to.be( "array[0]:1" ) ;
+		expect( proxy.array[ 1 ] ).to.be( "array[1]:2" ) ;
+		expect( proxy.array[ 2 ] ).to.be( "array[2]:3" ) ;
+		expect( proxy.array.length ).to.be( "array.length:3" ) ;
+	} ) ;
+
+	it( "custom data and recursive custom data" , () => {
+		var object = { a: 1 , deep: { c: 3 , deeper: { hello: "world!" } } , array: [ 1 , 2 , 3 ] } ,
+			data = { 'var': 'val' } ,
+			rData = { a: 'A!' , deep: { c: 'C!' , deeper: { hello: "H!" } } , array: [ '0!' , '1!' , '2!' ] } ;
+		
+		var proxy = new DeepProxy(
+			object ,
+			{
+				get: function( target , property , receiver , path ) {
+					expect( this.data ).to.be( data ) ;
+
+					if ( target[ property ] && typeof target[ property ] === 'object' ) {
+						return this.nested( property , this.rData?.[ property ] ) ;
+					}
+					
+					return path + ':' + this.data.var + ':' + this.rData?.[ property ] + ':' + target[ property ] ;
+				}
+			} ,
+			{ data , rData }
+		) ;
+		
+		expect( proxy ).not.to.be( object ) ;
+		expect( proxy.a ).to.be( "a:val:A!:1" ) ;
+		expect( proxy.deep ).not.to.be( object.deep ) ;
+		expect( proxy.deep.c ).to.be( "deep.c:val:C!:3" ) ;
+		expect( proxy.deep.deeper ).not.to.be( object.deep.deeper ) ;
+		expect( proxy.deep.deeper.hello ).to.be( "deep.deeper.hello:val:H!:world!" ) ;
+		expect( proxy.array ).not.to.be( object.array ) ;
+		expect( proxy.array[ 0 ] ).to.be( "array[0]:val:0!:1" ) ;
+		expect( proxy.array[ 1 ] ).to.be( "array[1]:val:1!:2" ) ;
+		expect( proxy.array[ 2 ] ).to.be( "array[2]:val:2!:3" ) ;
+		expect( proxy.array.length ).to.be( "array.length:val:3:3" ) ;
+	} ) ;
 	
+	it( "nested's target override" ) ;
 } ) ;
 

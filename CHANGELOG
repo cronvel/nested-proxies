@@ -1,0 +1,7 @@
+
+v0.2.0
+------
+
+BREAKING API changes: 'this.nested()' argument order changed, 'extra' is now 'data' (does not change) and 'rData' (recursive data, should be passed to 'this.nested()' call)
+
+

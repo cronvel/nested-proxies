@@ -1,6 +1,9 @@
 {
   "name": "nested-proxies",
-  "version": "0.1.9",
+  "version": "0.2.0",
+  "engines": {
+    "node": ">=14.15.0"
+  },
   "description": "A Deep Proxy!",
   "main": "lib/DeepProxy.js",
   "directories": {
@@ -35,7 +38,7 @@
     "title": "Nested Proxies",
     "years": [
       2018,
-      2020
+      2021
     ],
     "owner": "Cédric Ronvel"
   }
