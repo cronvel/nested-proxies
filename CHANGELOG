@@ -1,4 +1,10 @@
 
+v0.2.1
+------
+
+rData can be set as an extra override parameter by the constructor
+
+
 v0.2.0
 ------
 

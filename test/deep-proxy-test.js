@@ -361,6 +361,7 @@ describe( "Custom nested behavior" , () => {
 				}
 			} ,
 			{ data , rData }
+			//{ data } , rData
 		) ;
 		
 		expect( proxy ).not.to.be( object ) ;
